@@ -1,0 +1,58 @@
+# One CP2K Quickstep single-point energy of one structure: a small, complete
+# workflow package to copy and edit. See run.py for what the step does.
+
+[workflow]
+name = "cp2k.energy"
+description = "one CP2K Quickstep single-point energy calculation of one structure"
+requires = ["httk-workflow>=2.1.1", "httk-workflow-cp2k>=0.1.0", "httk-atomistic>=2.1.2"]
+
+[workflow.runner]
+entry = "run.py"
+steps = ["run"]
+# The persistent workdir holds the result; collect.py reads cp2k.out from it.
+data_mode = "none"
+
+[workflow.inputs.structure]
+destination = "POSCAR"
+role = "initial_structure"
+entry_type = "structures"
+required = true
+
+[workflow.parameters.basis]
+type = "string"
+default = "DZVP-MOLOPT-SR-GTH"
+description = "Basis set name for every species (from the BASIS_MOLOPT file)."
+
+[workflow.parameters.potential]
+type = "string"
+default = "GTH-PBE"
+description = "GTH pseudopotential name for every species (from the GTH_POTENTIALS file)."
+
+[workflow.parameters.xc]
+type = "string"
+default = "PBE"
+description = "Exchange-correlation functional (&XC_FUNCTIONAL section name)."
+
+[workflow.parameters.cutoff_ry]
+type = "number"
+default = 400
+description = "Finest plane-wave grid cutoff (&MGRID CUTOFF) in Ry."
+
+[workflow.parameters.rel_cutoff_ry]
+type = "number"
+default = 50
+description = "Gaussian-to-grid mapping cutoff (&MGRID REL_CUTOFF) in Ry."
+
+[workflow.parameters.kpoints]
+type = "array"
+description = "Monkhorst-Pack grid, e.g. [4, 4, 4]; omit for the Gamma point only."
+
+[workflow.outputs.total_energy]
+entry_type = "records"
+role = "total_energy"
+ref = "https://schemas.httk.org/defs/v0.1/properties/core/total_energy"
+description = "The converged total energy of the structure, in eV."
+product_of = "initial_structure"
+
+[workflow.collect]
+file = "collect.py"

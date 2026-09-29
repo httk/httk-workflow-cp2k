@@ -1,0 +1,28 @@
+
+ Possible matches for unknown keyword 
+
+ RUN_TYPO
+
+   keyword RUN_TYPE in section %__ROOT__%GLOBAL score:  109
+   enum AUTO in section %__ROOT__%GLOBAL for keyword ELPA_KERNEL score:  105
+   enum WFN_OPT in section %__ROOT__%GLOBAL for keyword RUN_TYPE score:  105
+   enum RTP in section %__ROOT__%GLOBAL for keyword RUN_TYPE score:  105
+   enum AMD_GPU in section %__ROOT__%GLOBAL for keyword ELPA_KERNEL score:  104
+
+ *******************************************************************************
+ *   ___                                                                       *
+ *  /   \                                                                      *
+ * [ABORT]                                                                     *
+ *  \___/           found an unknown keyword RUN_TYPO in section GLOBAL        *
+ *    |                                                                        *
+ *  O/|                                                                        *
+ * /| |                                                                        *
+ * / \                                               input/input_parsing.F:253 *
+ *******************************************************************************
+
+
+ ===== Routine Calling Stack ===== 
+
+            3 section_vals_parse
+            2 section_vals_parse
+            1 read_input

@@ -1,0 +1,4 @@
+[plugin]
+name = "httk-workflow-cp2k"
+description = "Example CP2K workflow packages (Quickstep energy)"
+workflows = ["workflows/cp2k-energy"]
