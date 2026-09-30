@@ -1,12 +1,15 @@
-"""Collect hook for the ``cp2k.energy`` workflow."""
+"""Collect hook for the ``cp2k.energy`` workflow.
 
-from httk.codes.cp2k import collect_cp2k
+The run leaves ``cp2k.out`` in the persistent workdir.
+"""
+
+from httk.codes.cp2k.collect import read_total_energy
 
 
 def collect(record):
-    """Extract the converged total energy from the job record.
+    """Return the converged total energy of the run.
 
     :param record: The collected job record.
     :return: The ``total_energy`` output role.
     """
-    return collect_cp2k(record)
+    return {"total_energy": read_total_energy(record.result_file("cp2k.out"))}

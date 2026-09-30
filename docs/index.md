@@ -5,7 +5,7 @@ of *httk₂*, see [docs.httk.org](https://docs.httk.org).
 
 The module adds CP2K support to *httk-workflow*: the Python helpers in
 `httk.codes.cp2k` (input writing, output parsing, diagnostics, supervised
-execution and a result collector), the Bash API a Bash runner sources as
+execution and result-reading helpers), the Bash API a Bash runner sources as
 `$HTTK_WORKFLOW_CP2K_BASH_API`, and the `cp2k-*` bridge commands behind that
 API. Installing it registers the `cp2k` code with *httk₂* through the
 `httk.registry.codes.cp2k` registration package. The repository also carries

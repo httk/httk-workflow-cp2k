@@ -134,8 +134,19 @@ data directory) say how to run CP2K and where the `BASIS_MOLOPT` and
 
 ## Collecting
 
-{py:func}`~httk.codes.cp2k.collect_cp2k` is the collect hook body: it reads
-`cp2k.out` from the job's published data, or its persistent workdir, and
-returns the `total_energy` output as a {py:class}`httk.core.DataRecord` of the
+{py:func}`~httk.codes.cp2k.collect.read_total_energy` reads the converged total
+energy from a CP2K output file as a {py:class}`httk.core.DataRecord` of the
 property `https://schemas.httk.org/defs/v0.1/properties/core/total_energy` in
-eV.
+eV. An output without a converged energy is refused.
+
+The packaged workflow's `collect.py` hook shows how a workflow locates the file
+with `record.result_file` and returns the role mapping; to collect more outputs,
+add lines to your copy of the hook:
+
+```python
+from httk.codes.cp2k.collect import read_total_energy
+
+
+def collect(record):
+    return {"total_energy": read_total_energy(record.result_file("cp2k.out"))}
+```

@@ -2,8 +2,9 @@
 
 ``inputs`` writes CP2K Quickstep inputs, ``outputs`` parses its text output,
 ``diagnostics`` classifies a finished calculation, ``reports`` runs it under
-supervision, and ``collect`` turns a finished job into workflow outputs. This
-package is a thin facade re-exporting their surface. The example workflow
+supervision, and ``collect`` reads workflow outputs out of result files, for
+workflow collect hooks. This package is a thin facade re-exporting their
+surface. The example workflow
 package ``workflows/cp2k-energy`` in this distribution's repository builds on it.
 """
 
@@ -29,7 +30,6 @@ register_citation(
     ),
 )
 
-from .collect import collect_cp2k
 from .diagnostics import diagnose_cp2k
 from .inputs import write_cp2k_input
 from .outputs import HA_TO_EV, Cp2kResult, parse_cp2k_output
@@ -39,7 +39,6 @@ __all__ = [
     "HA_TO_EV",
     "Cp2kResult",
     "Cp2kRunReport",
-    "collect_cp2k",
     "diagnose_cp2k",
     "parse_cp2k_output",
     "run_cp2k",

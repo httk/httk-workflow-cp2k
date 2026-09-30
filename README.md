@@ -12,9 +12,10 @@
 [*httk-workflow*](https://github.com/httk/httk-workflow), the workflow engine of
 [*httk₂*](https://github.com/httk/httk2). It provides `httk.codes.cp2k`: writing
 CP2K Quickstep inputs, parsing its output, stable diagnostics, supervised
-execution with a classified run report, and a collector for workflow outputs;
-and the Bash API that exposes the same helpers to Bash runners. Installing it
-registers the `cp2k` code with *httk₂*; nothing needs to be configured.
+execution with a classified run report, and helpers for reading workflow
+outputs; and the Bash API that exposes the same helpers to Bash runners.
+Installing it registers the `cp2k` code with *httk₂*; nothing needs to be
+configured.
 
 ## Install
 

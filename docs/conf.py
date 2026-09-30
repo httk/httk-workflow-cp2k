@@ -141,7 +141,7 @@ suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution"]
 # still scanned so the facade can document the names it re-exports. Within a
 # documented module, only the names it lists in ``__all__`` appear, which drops
 # the toolkit types the package merely imports.
-PUBLIC_MODULES = frozenset({"httk.codes.cp2k"})
+PUBLIC_MODULES = frozenset({"httk.codes.cp2k", "httk.codes.cp2k.collect"})
 
 _exports_cache: dict[str, frozenset[str] | None] = {}
 
