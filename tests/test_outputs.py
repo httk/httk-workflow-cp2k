@@ -43,3 +43,10 @@ def test_every_release_spelling_of_the_energy_line_is_read(tmp_path: Path, unit:
     path = tmp_path / "snippet.out"
     path.write_text(f" ENERGY| Total FORCE_EVAL ( QS ) energy {unit}      -31.115927819707686\n", encoding="utf-8")
     assert parse_cp2k_output(path).total_energy_ha == SILICON_ENERGY_HA
+
+
+def test_a_compressed_output_parses_like_the_plain_one(tmp_path: Path) -> None:
+    import bz2
+
+    (tmp_path / "si.out.bz2").write_bytes(bz2.compress((DATA / "si.out").read_bytes()))
+    assert parse_cp2k_output(tmp_path / "si.out.bz2") == parse_cp2k_output(DATA / "si.out")

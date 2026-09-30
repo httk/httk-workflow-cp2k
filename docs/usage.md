@@ -122,7 +122,7 @@ repository, or use it directly with `--workflow-dir`:
 httk workspace settings set --key cp2k.command --value 'mpirun -np 4 cp2k.psmp' WORKSPACE
 httk job new --workflow cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
 httk workflow run
-httk workflow collect --into results.sqlite
+httk collect --into results.sqlite
 ```
 
 Its parameters are `basis` (default `DZVP-MOLOPT-SR-GTH`), `potential` (default
@@ -150,3 +150,15 @@ from httk.codes.cp2k.collect import read_total_energy
 def collect(record):
     return {"total_energy": read_total_energy(record.result_file("cp2k.out"))}
 ```
+
+### Recognized calculations
+
+A finished CP2K run that was not started by a workspace is collected by the
+registered `cp2k.calculation` collector:
+`httk.workflow.collect_tree(root)` finds every directory holding exactly one
+`<stem>.out` whose first 100 lines carry the CP2K header (`CP2K| version
+string:`) together with `<stem>.inp`, compressed or not, and collects its
+converged total energy. The identity is a digest of the input file, so moving
+the directory keeps it. A directory with several CP2K outputs or without the
+input is reported as unclaimed; an unconverged output is claimed and degraded.
+{py:func}`~httk.codes.cp2k.collect.find_outputs` is the same header-based finder.

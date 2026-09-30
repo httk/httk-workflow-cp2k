@@ -9,6 +9,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from httk.core.datastream.compression import open_compressed
+
 __all__ = ["HA_TO_EV", "Cp2kResult", "parse_cp2k_output"]
 
 #: One Hartree in electronvolts (CODATA 2018), the unit CP2K prints energies in.
@@ -60,7 +62,9 @@ def parse_cp2k_output(path: str | os.PathLike[str]) -> Cp2kResult:
     :raises FileNotFoundError: If the output file does not exist.
     """
 
-    return _parse(Path(path).read_text(encoding="utf-8", errors="replace"))
+    path = Path(path)
+    with path.open("rb") as raw, open_compressed(raw, compression="extension", name=path.name) as stream:
+        return _parse(stream.read().decode("utf-8", errors="replace"))
 
 
 def _read(path: Path) -> str:

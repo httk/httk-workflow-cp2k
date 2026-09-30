@@ -1,0 +1,19 @@
+# Recognizes a finished free-standing CP2K run: one <stem>.out with its <stem>.inp.
+
+[workflow]
+name = "cp2k.calculation"
+description = "a finished CP2K calculation: one output file with its input beside it"
+
+[workflow.recognize]
+file = "recognize.py"
+priority = 10
+requires = ["*.out"]
+
+[workflow.outputs.total_energy]
+entry_type = "records"
+role = "total_energy"
+ref = "https://schemas.httk.org/defs/v0.1/properties/core/total_energy"
+description = "The converged total energy of the calculation, in eV."
+
+[workflow.collect]
+file = "collect.py"
