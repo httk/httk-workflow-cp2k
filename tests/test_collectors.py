@@ -40,6 +40,31 @@ def test_an_unconverged_run_is_claimed_and_degraded(tmp_path: Path) -> None:
     assert item.missing_collector is not None and "no converged total energy" in item.missing_collector
 
 
+@pytest.mark.parametrize("compress", [False, True])
+def test_a_run_with_energy_but_no_completion_footer_is_claimed_and_degraded(tmp_path: Path, compress: bool) -> None:
+    directory = _run(tmp_path / "si")
+    output = directory / "run.out"
+    data = output.read_bytes().replace(b"PROGRAM ENDED AT", b"")
+    if compress:
+        (directory / "run.out.bz2").write_bytes(bz2.compress(data))
+        output.unlink()
+    else:
+        output.write_bytes(data)
+    (outcome,) = claims(tmp_path)
+    assert outcome.kind == "claimed" and outcome.collector == "cp2k.calculation"
+    (item,) = collect_tree(tmp_path)
+    assert item.missing_collector is not None and "incomplete" in item.missing_collector
+    assert item.outputs == {}
+
+
+def test_an_incomplete_run_fails_fast(tmp_path: Path) -> None:
+    directory = _run(tmp_path / "si")
+    output = directory / "run.out"
+    output.write_bytes(output.read_bytes().replace(b"PROGRAM ENDED AT", b""))
+    with pytest.raises(ValueError, match="incomplete"):
+        list(collect_tree(tmp_path, fail_fast=True))
+
+
 def test_a_scheduler_log_is_no_candidate(tmp_path: Path) -> None:
     (tmp_path / "slurm-1.out").write_text("Job started\n" * 5, encoding="utf-8")
     assert list(claims(tmp_path)) == []

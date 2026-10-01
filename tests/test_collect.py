@@ -1,5 +1,6 @@
 """``read_total_energy`` reads one CP2K output; the packaged hook finds it with ``result_file``."""
 
+import bz2
 import runpy
 import shutil
 from pathlib import Path, PurePosixPath
@@ -23,6 +24,15 @@ def test_the_energy_is_read_in_ev() -> None:
 def test_an_unconverged_output_is_refused() -> None:
     with pytest.raises(ValueError, match="no converged total energy"):
         read_total_energy(DATA / "si_noconv.out")
+
+
+@pytest.mark.parametrize("compressed", [False, True])
+def test_an_output_with_energy_but_no_completion_footer_is_refused(tmp_path: Path, compressed: bool) -> None:
+    data = (DATA / "si.out").read_bytes().replace(b"PROGRAM ENDED AT", b"")
+    path = tmp_path / ("cp2k.out.bz2" if compressed else "cp2k.out")
+    path.write_bytes(bz2.compress(data) if compressed else data)
+    with pytest.raises(ValueError, match="incomplete.*PROGRAM ENDED AT"):
+        read_total_energy(path)
 
 
 def test_the_packaged_hook_reads_the_workdir_output(tmp_path: Path) -> None:

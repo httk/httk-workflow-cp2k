@@ -54,10 +54,13 @@ def read_total_energy(path: Path) -> DataRecord:
 
     :param path: The CP2K output file, optionally compressed.
     :return: The energy as a ``total_energy`` property record.
-    :raises ValueError: If the output holds no converged total energy.
+    :raises ValueError: If the output is incomplete or holds no converged total energy.
     """
 
-    energy = parse_cp2k_output(path).total_energy_ev
+    result = parse_cp2k_output(path)
+    energy = result.total_energy_ev
     if energy is None:
         raise ValueError(f"{path} holds no converged total energy")
+    if not result.completed:
+        raise ValueError(f"{path} is incomplete: CP2K did not report PROGRAM ENDED AT")
     return DataRecord.from_value(_TOTAL_ENERGY_DEFINITION, _TOTAL_ENERGY_NAME, energy)
