@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from httk.workflow.codes import Diagnostic, ProcessReport, ProcessSupervisor, write_json_atomic
+from httk.workflow.codes import Diagnostic, ProcessReport, ProcessSupervisor, launch_command, write_json_atomic
 
 from .diagnostics import diagnose_cp2k
 from .outputs import Cp2kResult, _parse, _read
@@ -71,23 +71,30 @@ def run_cp2k(
     input_file: str = "cp2k.inp",
     output_file: str = "cp2k.out",
     timeout: float | None = None,
+    launch: bool | None = None,
     termination_grace: float = 10.0,
     report_path: str | os.PathLike[str] = "cp2k-run-report.json",
 ) -> Cp2kRunReport:
     """Run CP2K under supervision and write a classified report.
 
-    *argv* is the command that starts CP2K, including any launcher such as
-    ``mpirun -np 4 cp2k.psmp``; ``-i INPUT_FILE -o OUTPUT_FILE`` is appended to
+    *argv* names the program (for example ``["cp2k.psmp"]``); ``-i INPUT_FILE -o OUTPUT_FILE`` is appended to
     it. CP2K appends to an existing output file, so one left by an earlier run
     is removed first. Standard output and standard error, normally empty or
     launcher messages, are saved beside the output with the suffixes
     ``.stdout`` and ``.err``.
+
+    The attempt's launch prefix (the parallel start, ``HTTK_WORKFLOW_LAUNCH``) is
+    prepended by default; ``launch=False`` runs *argv* as given, and a command that
+    already starts with a launcher such as ``srun`` or ``mpirun`` is refused with
+    :class:`ValueError` when a prefix applies.
 
     :param argv: The CP2K command argument vector, without the input and output options.
     :param directory: Run CP2K in this directory.
     :param input_file: The input file name in *directory*.
     :param output_file: The output file name CP2K writes in *directory*.
     :param timeout: Stop the process after this many seconds when set.
+    :param launch: Prepend the attempt's launch prefix when true, the default (``None``);
+        ``False`` runs *argv* as given.
     :param termination_grace: Allow this many seconds for graceful termination.
     :param report_path: Write the report at this directory-relative path.
     :return: The classified run report.
@@ -98,7 +105,7 @@ def run_cp2k(
     output.unlink(missing_ok=True)
     # ponytail: no live monitor or remedy ladder; add them when a real campaign needs them.
     process = ProcessSupervisor().run(
-        [*argv, "-i", input_file, "-o", output_file],
+        [*launch_command(argv, launch=launch is not False), "-i", input_file, "-o", output_file],
         timeout=timeout,
         cwd=root,
         termination_grace=termination_grace,

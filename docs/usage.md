@@ -30,7 +30,7 @@ write_cp2k_input(
     kpoints=(4, 4, 4),
     potential={"Si": "GTH-PBE-q4"},
 )
-report = run_cp2k(["mpirun", "-np", "4", "cp2k.psmp"], timeout=3600)
+report = run_cp2k(["cp2k.psmp"], timeout=3600)
 if report.ok:
     print(report.result.total_energy_ev)
 else:
@@ -94,14 +94,16 @@ source "$HTTK_WORKFLOW_BASH_API"
 source "$HTTK_WORKFLOW_CP2K_BASH_API"
 
 httk_cp2k_write_input --options options.json   # the write_cp2k_input keywords as JSON
-httk_cp2k_run --timeout 3600 -- mpirun -np 4 cp2k.psmp
+httk_cp2k_run --timeout 3600 -- cp2k.psmp
 energy=$(httk_cp2k_energy --unit ev)
 ```
+
+The command names only the program: the attempt's launch prefix (the parallel start, the `HTTK_WORKFLOW_LAUNCH` variable the workflow manager sets from the `manager.launch_template` setting, or the built-in Slurm prefix) is prepended to it, and `--no-launch` (`launch=False` in Python) runs the command as given. A command that already starts with a launcher such as `mpirun` or `srun` is refused when a prefix applies.
 
 | Function | Bridge command | Exit status |
 | --- | --- | --- |
 | `httk_cp2k_write_input --options FILE [--input cp2k.inp]` | `cp2k-write-input` | `0` |
-| `httk_cp2k_run [--directory] [--input] [--output] [--timeout] -- CMD...` | `cp2k-run` | `0` completed, `20` crashed, `21` nonconverged, `22` process failure, `124` timeout (as `vasp-run`); prints the report path |
+| `httk_cp2k_run [--directory] [--input] [--output] [--timeout] [--no-launch] -- CMD...` | `cp2k-run` | `0` completed, `20` crashed, `21` nonconverged, `22` process failure, `124` timeout (as `vasp-run`); prints the report path |
 | `httk_cp2k_energy [--output cp2k.out] [--unit ha\|ev]` | `cp2k-energy` | `0` and the energy, `1` when there is none |
 | `httk_cp2k_converged [--output cp2k.out]` | `cp2k-converged` | `0` converged, `1` not converged or unknown |
 | `httk_cp2k_diagnose [--output cp2k.out] [--json]` | `cp2k-diagnose` | `0` clean, `20` when it printed diagnostics |
@@ -119,7 +121,7 @@ potential files by name. Install it with `httk plugin install` of the
 repository, or use it directly with `--workflow-dir`:
 
 ```console
-httk workspace settings set --key cp2k.command --value 'mpirun -np 4 cp2k.psmp' WORKSPACE
+httk workspace settings set --key cp2k.command --value cp2k.psmp WORKSPACE
 httk job new --workflow cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
 httk workflow run
 httk collect --into results.sqlite

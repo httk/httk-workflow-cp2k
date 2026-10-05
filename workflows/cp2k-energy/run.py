@@ -11,7 +11,7 @@ name.
 Settings, resolved job parameter -> ``HTTK_*`` variable -> workspace setting:
 
 * ``cp2k.command``: the command that starts CP2K (default ``cp2k.psmp``), e.g.
-  ``mpirun -np 4 cp2k.psmp``;
+  ``cp2k.psmp`` (the attempt's launch prefix supplies the parallel start);
 * ``cp2k.data_dir``: the directory holding the ``BASIS_MOLOPT`` and
   ``GTH_POTENTIALS`` files (default: CP2K's own data directory).
 """
