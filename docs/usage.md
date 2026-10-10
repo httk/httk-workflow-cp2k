@@ -122,7 +122,7 @@ repository, or use it directly with `--workflow-dir`:
 
 ```console
 httk workspace settings set --key cp2k.command --value cp2k.psmp WORKSPACE
-httk job new --workflow cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
+httk job new --install --workflow cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
 httk workflow run
 httk collect --into results.sqlite
 ```

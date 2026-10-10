@@ -42,6 +42,7 @@ def test_cp2k_energy_runs_cp2k_and_collects_the_total_energy(
     from httk.core import DataRecord, Run
     from httk.core.cli import CLIContext
     from httk.workflow import TaskManager, Workspace
+    from httk.workflow.collecting import job_records
     from httk.workflow.registry import register_workspace
     from httk.workflow.scaffold import new_job
     from httk.workflow.workflow_cli import command
@@ -57,12 +58,12 @@ def test_cp2k_energy_runs_cp2k_and_collects_the_total_energy(
         "cp2k.energy",
         inputs={"structure": tmp_path / "POSCAR"},
         parameters={"cutoff_ry": 100, "rel_cutoff_ry": 40},
+        install=True,
     )
     with TaskManager(workspace, heartbeat_interval=0.01) as manager:
         manager.run_until_idle(timeout=600.0)
-    marker = workspace.find_marker_by_id(job.job_id)
-    assert marker is not None
-    assert marker.kind == "succeeded", workspace.read_state(marker).get("failure")
+    [record] = job_records(workspace, states=("succeeded", "failed"))
+    assert (record.job_id, record.state) == (job.job_id, "succeeded"), record.failure
     (output,) = (tmp_path / "workspace").rglob("cp2k.out")
     parsed = parse_cp2k_output(output).total_energy_ev
     assert parsed == pytest.approx(-846.707, abs=0.01)

@@ -51,7 +51,6 @@ def test_the_packaged_hook_reads_the_workdir_output(tmp_path: Path) -> None:
         payload_path=PurePosixPath(f"jobs/job--{JOB_ID}"),
         workdir_path=PurePosixPath("run"),
         data_path=None,
-        data_generation=None,
         provenance={},
         runner_steps=None,
         children={},
