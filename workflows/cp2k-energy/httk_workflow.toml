@@ -10,7 +10,6 @@ requires = ["httk-workflow>=2.1.1", "httk-workflow-cp2k>=0.1.0", "httk-atomistic
 entry = "run.py"
 steps = ["run"]
 # The persistent workdir holds the result; collect.py reads cp2k.out from it.
-data_mode = "none"
 
 [workflow.inputs.structure]
 destination = "POSCAR"
