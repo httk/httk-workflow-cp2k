@@ -5,6 +5,7 @@
 name = "cp2k.energy"
 description = "one CP2K Quickstep single-point energy calculation of one structure"
 requires = ["httk-workflow>=2.1.1", "httk-workflow-cp2k>=0.1.0", "httk-atomistic>=2.1.2"]
+settings = ["cp2k.command", "cp2k.data_dir"]
 
 [workflow.runner]
 entry = "run.py"
