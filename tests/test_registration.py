@@ -15,6 +15,10 @@ def test_cp2k_is_a_known_code_with_its_packaged_bash_api() -> None:
     assert code_support("cp2k").bash_api_path() == Path(str(files("httk.codes.cp2k").joinpath("httk-cp2k.sh")))
 
 
+def test_cp2k_declares_its_application_settings() -> None:
+    assert code_support("cp2k").settings == ("cp2k.command", "cp2k.data_dir")
+
+
 def test_the_bridge_mounts_the_cp2k_commands() -> None:
     parser = argparse.ArgumentParser()
     code_support("cp2k").resolve_bridge().add_commands(parser.add_subparsers(dest="command"))
