@@ -118,12 +118,12 @@ one Python runner step that stages the `structure` input, writes `cp2k.inp`,
 runs CP2K, and fails with the first diagnostic code when the calculation is not
 clean. There are no pseudopotential files to stage: CP2K reads the basis and
 potential files by name. Install it with `httk plugin install` of the
-repository, or use it directly with `--workflow-dir`:
+repository, or use it directly with `httk job new DIR`:
 
 ```console
-httk workspace settings set --key cp2k.command --value cp2k.psmp WORKSPACE
-httk job new --install --workflow cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
-httk workflow run
+httk workspace set -w WORKSPACE cp2k.command=cp2k.psmp
+httk job new --install cp2k.energy --input structure=POSCAR --parameter 'kpoints=[4, 4, 4]'
+httk run
 httk collect --into results.sqlite
 ```
 
